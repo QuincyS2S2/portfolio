@@ -1,7 +1,28 @@
 @charset "UTF-8";
 
-/* ===== 기본 리셋 ===== */
-* { margin: 0; padding: 0; box-sizing: border-box;     text-decoration: none; list-style : none;}
+/* =========================================================================
+   Portfolio — style.css
+   레이아웃 기준: 고정 폭 데스크톱 캔버스 (콘텐츠 폭 1200px)
+   사이드바 276 + gap 32 + 메인 584 + gap 32 + 우측 276 = 1200
+   ※ 픽셀값은 Figma 기준 그대로 유지. 주석/베이스/인터랙션만 보강.
+   ========================================================================= */
+
+
+/* =========================================================================
+   0. Reset & Base
+   ========================================================================= */
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 장식 제거는 해당 요소에만 한정 (전역 *에 거는 것보다 의도가 분명함) */
+a  { text-decoration: none; }
+ul, ol { list-style: none; }
 
 html, body { width: 100%; min-height: 100%; }
 
@@ -9,18 +30,44 @@ body {
     background: #FBFDF5;
     font-family: "Noto Sans KR", "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
     color: #222222;
+
+    /* 기준 폰트/행간: 문서 전체 타이포의 베이스라인 */
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
 
+/* 이미지가 부모를 넘지 않게 + 인라인 여백(baseline gap) 제거 — 반응형 안전장치 */
+img {
+    display: block;
+    max-width: 100%;
+}
+
+/* 키보드 탐색 시에만 포커스 링 노출 (마우스 클릭 땐 안 뜸) */
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid #0088FF;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+
 .bg-noise {
-    position: fixed; 
+    position: fixed;
     inset: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;       /* 모든 콘텐츠 뒤로 */
-    pointer-events: none;
+    z-index: -1;            /* 모든 콘텐츠 뒤로 */
+    pointer-events: none;   /* 노이즈가 클릭을 가로채지 않도록 */
 }
 
-/* ===== 페이지 래퍼: 1440px 캔버스 중앙 정렬, 좌우 여백 120px ===== */
+
+/* =========================================================================
+   1. Layout — 페이지 래퍼 / 스테이지
+   ========================================================================= */
+
+/* 콘텐츠 1200px 캔버스 중앙 정렬, 상하 여백 60px */
 .page-wrapper {
     max-width: 1200px;
     margin: 0 auto;
@@ -35,9 +82,13 @@ body {
     flex-direction: row;
     gap: 32px;
     align-items: flex-start;
+
+    /* 내부 고정폭 자식이 줄어들지 못해 생기는 가로 넘침 방지용 가드.
+       본격 반응형(폭에 따라 컬럼 재배치)은 하단 미디어쿼리 메모 참고. */
+    flex-wrap: wrap;
 }
 
-/* header(nav) sticky: 스크롤 시 화면 상단에 고정 */
+/* nav를 스크롤 내내 상단 고정 */
 header {
     position: sticky;
     top: 60px;
@@ -45,68 +96,62 @@ header {
 }
 
 
+/* =========================================================================
+   2. 사이드바 (navBar)
+   ========================================================================= */
 
 .navBar {
     display: flex;
     width: 276px;
     padding: 20px;
     flex-direction: column;
-    align-items: stretch;   /* 자식 요소들이 가로폭을 꽉 채우도록 변경 */
+    align-items: stretch;   /* 자식들이 가로폭을 꽉 채움 */
     gap: 24px;
     border-radius: 30px;
     background: #FFF;
-    /* 그림자 */
-    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.04);   
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.04);
 }
 
-
+/* --- macOS 스타일 신호등 --- */
 .mac-style-traffic-light {
-    display : flex;
+    display: flex;
     align-items: center;
-    gap : 8px;
+    gap: 8px;
 }
 
-.mac-style-traffic-light > div{
+.mac-style-traffic-light > div {
     width: 14px;
     height: 14px;
-    border-radius : 999px;
+    border-radius: 999px;
 }
 
-.mac-style-traffic-light > div:first-child {
-    background-color: #F87970;
-}
+.mac-style-traffic-light > div:first-child  { background-color: #F87970; }
+.mac-style-traffic-light > div:nth-child(2) { background-color: #FFB923; }
+.mac-style-traffic-light > div:last-child   { background-color: #92DDA7; }
 
-.mac-style-traffic-light > div:nth-child(2) {
-    background-color: #FFB923;
-}
-
-.mac-style-traffic-light > div:last-child {
-    background-color: #92DDA7;
-}
-
+/* --- 프로필 영역 --- */
 .top-inner {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    /* width: 100% 불필요 — 부모(navBar)의 align-items: stretch가 자동으로 채움 */
 }
 
 .user-profile {
     display: flex;
     justify-content: space-between;
-    /* width: 100% 불필요 — 부모(top-inner)가 stretch이므로 자동으로 채움 */
+    align-items: flex-start;
 }
 
 .name-wrap {
     display: flex;
     flex-direction: column;
+    min-width: 0;           /* 긴 이름이 옆 아이콘을 밀어내지 않도록 */
 }
 
-.name-wrap > h1 { /* 김은지 이름*/
+.name-wrap > h1 {           /* 이름 (김은지) */
     color: #222;
     font-family: "Noto Sans KR";
     font-size: 26px;
-    font-style: normal;
     font-weight: 500;
     line-height: normal;
 }
@@ -121,11 +166,11 @@ header {
     color: #999;
     font-family: "Noto Sans KR";
     font-size: 18px;
-    font-style: normal;
     font-weight: 400;
     line-height: normal;
 }
 
+/* --- 집 아이콘 + 호버 말풍선 --- */
 .home-where {
     position: relative;
 }
@@ -136,23 +181,28 @@ header {
     cursor: pointer;
 }
 
-/* 아이콘 위에 뜨는 말풍선 */
 .my-home {
     position: absolute;
     bottom: 100%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(4px);   /* 등장 시 살짝 아래→제자리 */
     margin-bottom: 6px;
-    display: none;
+    display: flex;
     flex-direction: column;
     align-items: center;
     white-space: nowrap;
     z-index: 10;
+
+    /* display:none 대신 opacity/visibility로 전환 → 페이드 인 가능 */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-/* 호버 시 말풍선 표시 */
 .home-where:hover .my-home {
-    display: flex;
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
 }
 
 .my-home h4 {
@@ -169,47 +219,46 @@ header {
     color: #222;
 }
 
-.my-home .triangle {
-    margin-top: -4px;
-    line-height: 0;
-}
+.my-home .triangle      { margin-top: -4px; line-height: 0; }
+.my-home .triangle svg  { display: block; }
 
-.my-home .triangle svg {
-    display: block;
-}
-
+/* --- 이력서 다운로드 버튼 --- */
 .download-resume-wrap {
     display: flex;
     padding: 8px 10px;
     justify-content: space-between;
     align-items: center;
-    width : 100%;
+    width: 100%;
     border-radius: 8px;
     background: #222222;
+    cursor: pointer;
+    transition: box-shadow 0.25s ease, transform 0.25s ease;   /* hover 부드럽게 */
+}
+
+.download-resume-wrap:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);    /* 살짝 떠오르는 피드백 */
 }
 
 .download-resume-wrap h1 {
     color: #FFF;
     font-size: 20px;
-    font-style: normal;
     font-weight: 700;
     line-height: normal;
     letter-spacing: -0.02em;
 }
 
-.download-resume-wrap:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-}
-
+/* 공통 아이콘 박스 기본 크기 */
 .icon {
-    width : 24px;
+    width: 24px;
     height: 24px;
 }
 
+/* --- 네비게이션 --- */
 nav > ul {
     display: flex;
     flex-direction: column;
-    align-items: stretch;  /* li 항목들도 가로폭을 꽉 채우도록 변경 */
+    align-items: stretch;
     gap: 30px;
 }
 
@@ -220,7 +269,7 @@ nav > ul > li {
     gap: 12px;
 }
 
-/* "메인 보드"처럼 하위 ul이 없는 첫 항목은 아이콘+텍스트 가로 배치 유지 */
+/* "메인 보드"처럼 하위 ul이 없는 첫 항목은 아이콘+텍스트 가로 배치 */
 nav > ul > li:first-child {
     flex-direction: row;
     align-items: center;
@@ -239,73 +288,79 @@ nav > ul > li > span > a {
     font-size: 16px !important;
 }
 
-
-/* 하위 카테고리의 a 링크: 아이콘 + 텍스트 가로 배치 */
+/* 하위 카테고리 링크: 아이콘 + 텍스트 가로 배치 */
 nav > ul > li > ul > li > a {
     display: flex;
     align-items: center;
     padding: 4px 4px 4px 6px;
     height: 36px;
     gap: 8px;
+    border-radius: 8px;                 /* 호버 배경을 깔 때를 대비한 모서리 */
+    transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 nav > ul > li > ul > li > a:hover {
-    color : #222;
+    color: #222;
 }
 
-/* 호버 시 아이콘 색상도 #222로 변경 (stroke 기반 아이콘) */
+/* 호버 시 아이콘 색 동기화 — stroke 기반 아이콘 */
 nav > ul > li > ul > li > a:hover .icon svg path {
     stroke: #222;
+    transition: stroke 0.2s ease;
 }
 
-/* 호버 시 아이콘 색상도 #222로 변경 (fill 기반 아이콘) */
+/* 호버 시 아이콘 색 동기화 — fill 기반 아이콘 */
 nav > ul > li > ul > li > a:hover .icon svg path[fill="#727272"] {
     fill: #222;
+    transition: fill 0.2s ease;
 }
 
-
+/* 링크 기본 타이포 */
 a {
     color: #727272;
     font-family: "Noto Sans KR";
     font-size: 18px;
-    font-style: normal;
     font-weight: 500;
     line-height: normal;
 }
 
+/* 상위 카테고리(2번째 이후) 강조색 */
 nav > ul > li:nth-child(n+2) > span > a {
-    color : #F8FF43 !important;
+    color: #F8FF43 !important;
 }
 
-/* nav 끝!!! main 시작*/
 
-/* ===== 메인 보드 영역 (#95:539) ===== */
+/* =========================================================================
+   3. 메인 보드
+   ========================================================================= */
+
 .main-bord-wrap {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;   /* Figma: alignItems flex-end */
-    gap: 32px;               /* Figma: gap 32px */
-    width: 584px;            /* Figma: designedWidth 584px */
+    align-items: flex-end;
+    gap: 32px;
+    width: 584px;
+    min-width: 0;           /* iframe/긴 텍스트가 폭을 밀어내는 것 방지 */
 }
 
-/* ===== 첫 번째 그룹: 배너 영역 (#95:537) ===== */
+/* --- 배너 그룹 --- */
 .banner-group {
     display: flex;
     flex-direction: column;
-    align-self: stretch;     /* 가로폭 꽉 채움 */
+    align-self: stretch;
     align-items: stretch;
-    gap: 24px;               /* Figma: gap 24px */
+    gap: 24px;
 }
 
-/* ===== 상단 배너 행: top-banner + core-banner (#95:534) ===== */
 .banner-row {
     display: flex;
     flex-direction: row;
     align-self: stretch;
     justify-content: space-between;
+    gap: 16px;              /* space-between만 의존하지 않도록 최소 간격 확보 */
 }
 
-/* ===== 중앙 top-banner (#18:52) ===== */
+/* --- 중앙 소개 배너 --- */
 .top-banner {
     display: flex;
     flex-direction: row;
@@ -335,6 +390,8 @@ nav > ul > li:nth-child(n+2) > span > a {
     object-fit: cover;
 }
 
+.top-banner .banner-txt { min-width: 0; }
+
 .top-banner .banner-txt h4 {
     color: #222222;
     font-family: "Noto Sans KR";
@@ -344,17 +401,10 @@ nav > ul > li:nth-child(n+2) > span > a {
     text-align: left;
 }
 
-/* ts1: #FFCC00 색상 강조 (편의성, 디자인) */
-.top-banner .banner-txt h4 .ts1 {
-    color: #FFCC00;
-}
+.top-banner .banner-txt h4 .ts1 { color: #FFCC00; }   /* 편의성, 디자인 강조 */
+.top-banner .banner-txt h4 .ts2 { color: #222222; }   /* 기본색 */
 
-/* ts2: 기본 색상 (#222222) — "과", "두마리 토끼를 잡는" */
-.top-banner .banner-txt h4 .ts2 {
-    color: #222222;
-}
-
-/* ===== core-banner (#18:82) ===== */
+/* --- core 배너 (기획→구현) --- */
 .core-banner {
     display: flex;
     flex-direction: column;
@@ -363,6 +413,7 @@ nav > ul > li:nth-child(n+2) > span > a {
     align-items: center;
     gap: 10px;
     width: 173px;
+    flex-shrink: 0;
     background: #FFFFFF;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.04);
     border-radius: 40px;
@@ -395,22 +446,11 @@ nav > ul > li:nth-child(n+2) > span > a {
     white-space: nowrap;
 }
 
-.core-banner p span {
-    flex-shrink: 0;
-    white-space: nowrap;
-}
+.core-banner p span { flex-shrink: 0; white-space: nowrap; }
+.core-banner p span:first-child { color: #FF8D28; }   /* 기획 */
+.core-banner p span:last-child  { color: #0088FF; }   /* 구현 */
 
-/* ts3: #FF8D28 (기획) */
-.core-banner p span:first-child {
-    color: #FF8D28;
-}
-
-/* ts4: #0088FF (구현) */
-.core-banner p span:last-child {
-    color: #0088FF;
-}
-
-/* ===== 사용 앱 배너 (#22:139) ===== */
+/* --- 사용 앱 배너 --- */
 .use-app-banner {
     display: flex;
     flex-direction: row;
@@ -442,10 +482,10 @@ nav > ul > li:nth-child(n+2) > span > a {
 }
 
 .use-app-banner li:hover img {
-    transform: scale(1.15);
+    transform: scale(1.15);     /* 아이콘 호버 시 살짝 확대 */
 }
 
-/* ===== 파일 배너 (#54:545) ===== */
+/* --- 파일(폴더) 배너 --- */
 .file-banner {
     display: flex;
     flex-direction: row;
@@ -459,7 +499,7 @@ nav > ul > li:nth-child(n+2) > span > a {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center;
+    align-items: flex-end;     /* 폴더가 '바닥에 선' 느낌 — 까딱 회전과 잘 맞음 */
     gap: 20px;
 }
 
@@ -467,23 +507,21 @@ nav > ul > li:nth-child(n+2) > span > a {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
-    transition: transform 0.3s ease;
+    gap: 14px;
+
+    /* 폴더 까딱 효과:
+       회전축을 아래(bottom)에 둬서 '발끝은 붙고 몸통이 기우는' 경첩 느낌 */
     transform-origin: bottom center;
+    transition: transform 0.3s ease;
 }
 
 .file-banner ul li:hover {
-    transform: rotate(-5deg) translateY(-4px);
+    transform: translateY(-4px) rotate(-4deg);   /* 살짝 들리며 옆으로 까딱 */
 }
 
-/* 첫 번째 아이템은 193px, 나머지는 164px (Figma #54:544 vs template) */
-.file-banner ul li:first-child {
-    width: 193px;
-}
-
-.file-banner ul li:not(:first-child) {
-    width: 164px;
-}
+/* 첫 번째 아이템은 193px, 나머지는 164px */
+.file-banner ul li:first-child      { width: 193px; }
+.file-banner ul li:not(:first-child){ width: 164px; }
 
 .file-banner ul li .img-box {
     width: 164px;
@@ -498,7 +536,7 @@ nav > ul > li:nth-child(n+2) > span > a {
     object-fit: cover;
 }
 
-.file-banner ul li h1 {
+.file-banner ul li p {
     color: #222222;
     font-family: "Noto Sans KR";
     font-size: 24px;
@@ -506,10 +544,13 @@ nav > ul > li:nth-child(n+2) > span > a {
     letter-spacing: -0.02em;
     text-align: center;
     line-height: 1.5em;
-    margin-top : 16px
 }
 
-/* ===== 스케치 이미지 영역 (#95:538) ===== */
+
+/* =========================================================================
+   4. 스케치 이미지 영역
+   ========================================================================= */
+
 .img-sketch {
     width: 583px;
     height: 235px;
@@ -526,25 +567,29 @@ nav > ul > li:nth-child(n+2) > span > a {
     position: absolute;
 }
 
-/* 첫 번째 이미지 (약, #69:598): x:194 y:19 389x199 */
+/* 1) 뒤에 깔린 스케치 종이 (sketch.png) — 약통 뒤에 살짝 보임 */
 .img-sketch .main-img-box .img-box:nth-child(1) {
     left: 194px;
     top: 19px;
     width: 389px;
     height: 199px;
-    transition: transform 0.3s ease;
+    z-index: 1;
+    transition: transform 0.4s ease;   /* 호버 슬라이드용 */
 }
 
-.img-sketch .main-img-box .img-box:nth-child(1):hover {
-    transform: translateX(10px);
-}
-
-/* 두 번째 이미지 (1223 copy, #69:575): x:0 y:0 492x235 */
+/* 2) 앞에 놓인 약통 이미지 (approximately.png) */
 .img-sketch .main-img-box .img-box:nth-child(2) {
     left: 0;
     top: 0;
     width: 492px;
     height: 235px;
+    z-index: 2;
+}
+
+/* 영역 호버 시: 뒤 스케치 종이가 오른쪽으로 살짝 빠져나옴
+   (회전은 종이 들춰지는 느낌 — 순수 슬라이드만 원하면 rotate 빼면 됨) */
+.img-sketch:hover .main-img-box .img-box:nth-child(1) {
+    transform: translateX(24px) rotate(1.5deg);
 }
 
 .img-sketch .main-img-box .img-box img {
@@ -553,7 +598,11 @@ nav > ul > li:nth-child(n+2) > span > a {
     object-fit: cover;
 }
 
-/* ===== 오른쪽 컬럼 (#105:541) ===== */
+
+/* =========================================================================
+   5. 우측 컬럼
+   ========================================================================= */
+
 .right-column {
     display: flex;
     flex-direction: column;
@@ -563,7 +612,7 @@ nav > ul > li:nth-child(n+2) > span > a {
     flex-shrink: 0;
 }
 
-/* ===== 오른쪽: 큰 폰 (#18:114) ===== */
+/* --- 큰 폰 목업 --- */
 .big-phone {
     display: flex;
     flex-direction: column;
@@ -573,12 +622,6 @@ nav > ul > li:nth-child(n+2) > span > a {
     background: #FFFFFF;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.04);
     border-radius: 40px;
-    transition: transform 0.3s ease;
-    transform-origin: bottom center;
-}
-
-.big-phone:hover {
-    transform: rotate(5deg) translateY(-4px);
 }
 
 .big-phone .img-box {
@@ -594,7 +637,7 @@ nav > ul > li:nth-child(n+2) > span > a {
     object-fit: contain;
 }
 
-/* ===== right-bottom-group (#105:540) ===== */
+/* --- 하단 그룹 --- */
 .right-bottom-group {
     display: flex;
     flex-direction: column;
@@ -603,7 +646,6 @@ nav > ul > li:nth-child(n+2) > span > a {
     gap: 14px;
 }
 
-/* ===== more-Talk (#24:170) ===== */
 .more-Talk {
     display: flex;
     align-items: center;
@@ -620,7 +662,7 @@ nav > ul > li:nth-child(n+2) > span > a {
     text-align: center;
 }
 
-/* ===== 명함 business-card (#69:572) ===== */
+/* --- 명함 --- */
 .business-card {
     display: flex;
     flex-direction: column;
@@ -641,6 +683,7 @@ nav > ul > li:nth-child(n+2) > span > a {
     display: flex;
     align-items: center;
     gap: 10px;
+    min-width: 0;           /* 긴 이메일이 카드 밖으로 새지 않도록 */
 }
 
 .business-card .icon {
@@ -655,9 +698,14 @@ nav > ul > li:nth-child(n+2) > span > a {
     font-size: 18px;
     font-weight: 700;
     line-height: normal;
+    white-space: nowrap;
 }
 
-/* ===== 메인 워크 본문 (#95:540) ===== */
+
+/* =========================================================================
+   6. 메인 워크 (포스트 본문)  ※ 구조는 원본 유지, 정리 위주
+   ========================================================================= */
+
 .main-work {
     width: 100%;
     display: flex;
@@ -684,11 +732,7 @@ nav > ul > li:nth-child(n+2) > span > a {
     gap: 8px;
 }
 
-.class-list .icon {
-    width: 24px;
-    height: 24px;
-    flex-shrink: 0;
-}
+.class-list .icon { width: 24px; height: 24px; flex-shrink: 0; }
 
 .class-list h2 {
     color: #0088FF;
@@ -704,17 +748,8 @@ nav > ul > li:nth-child(n+2) > span > a {
     gap: 12px;
 }
 
-.class-title .logo {
-    width: 40px;
-    height: 40px;
-    overflow: hidden;
-}
-
-.class-title .logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
+.class-title .logo { width: 40px; height: 40px; overflow: hidden; }
+.class-title .logo img { width: 100%; height: 100%; object-fit: contain; }
 
 .class-title h2 {
     color: #222222;
@@ -731,7 +766,10 @@ nav > ul > li:nth-child(n+2) > span > a {
     gap: 24px;
 }
 
-/* 목업 + iframe */
+/* 목업 + iframe
+   ⚠ TODO: 현재 iframe이 목업 이미지 전체를 덮음(top/left 0, 100%).
+   기기 프레임 안 '화면 영역'에만 맞추려면 목업 화면부 좌표(top/left/right/bottom)에
+   맞춰 iframe을 inset 시켜야 함. (post 영역 다듬을 때 처리) */
 .post-wrap .mokup {
     position: relative;
     width: 100%;
@@ -741,10 +779,7 @@ nav > ul > li:nth-child(n+2) > span > a {
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.04);
 }
 
-.post-wrap .mokup img {
-    width: 100%;
-    display: block;
-}
+.post-wrap .mokup img { width: 100%; display: block; }
 
 .post-wrap .mokup iframe {
     position: absolute;
@@ -825,13 +860,9 @@ nav > ul > li:nth-child(n+2) > span > a {
     gap: 12px;
 }
 
-.program-used ul li {
-    width: 40px;
-    height: 40px;
-}
-
-.program-used ul li .img,
-.program-used ul li {
+/* li와 .img 모두 40x40 중앙 정렬 */
+.program-used ul li,
+.program-used ul li .img {
     width: 40px;
     height: 40px;
     display: flex;
@@ -871,11 +902,7 @@ nav > ul > li:nth-child(n+2) > span > a {
     gap: 8px;
 }
 
-.button .icon {
-    width: 38px;
-    height: 38px;
-    flex-shrink: 0;
-}
+.button .icon { width: 38px; height: 38px; flex-shrink: 0; }
 
 .button .btn {
     display: inline-flex;
@@ -888,9 +915,18 @@ nav > ul > li:nth-child(n+2) > span > a {
     font-size: 16px;
     font-weight: 500;
     line-height: normal;
+    transition: background-color 0.2s ease;   /* 색 전환 부드럽게 */
 }
 
-.button .btn:hover {
-    background: #0088FF;
-}
+.button .btn:hover { background: #0088FF; }
 
+
+/* =========================================================================
+   7. 반응형 메모
+   ---------------------------------------------------------------------------
+   현재 레이아웃은 콘텐츠 폭 1200px 고정(데스크톱 캔버스)이라,
+   화면이 1200px보다 좁아지면 가로 스크롤/잘림이 생길 수 있음.
+   .stage에 flex-wrap을 줘서 '잘림' 대신 컬럼이 아래로 떨어지게는 해뒀지만,
+   메인 584px 등 내부 폭은 여전히 고정이라 모바일 완전 대응은 별도 작업 필요.
+   (각 컬럼 width를 % 또는 clamp()로 유동화 + 브레이크포인트 설계)
+   ========================================================================= */
