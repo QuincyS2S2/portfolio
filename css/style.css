@@ -467,7 +467,13 @@ nav > ul > li:nth-child(n+2) > span > a {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
+    transition: transform 0.3s ease;
+    transform-origin: bottom center;
+}
+
+.file-banner ul li:hover {
+    transform: rotate(-5deg) translateY(-4px);
 }
 
 /* 첫 번째 아이템은 193px, 나머지는 164px (Figma #54:544 vs template) */
@@ -492,7 +498,7 @@ nav > ul > li:nth-child(n+2) > span > a {
     object-fit: cover;
 }
 
-.file-banner ul li p {
+.file-banner ul li h1 {
     color: #222222;
     font-family: "Noto Sans KR";
     font-size: 24px;
@@ -500,6 +506,7 @@ nav > ul > li:nth-child(n+2) > span > a {
     letter-spacing: -0.02em;
     text-align: center;
     line-height: 1.5em;
+    margin-top : 16px
 }
 
 /* ===== 스케치 이미지 영역 (#95:538) ===== */
@@ -525,6 +532,11 @@ nav > ul > li:nth-child(n+2) > span > a {
     top: 19px;
     width: 389px;
     height: 199px;
+    transition: transform 0.3s ease;
+}
+
+.img-sketch .main-img-box .img-box:nth-child(1):hover {
+    transform: translateX(10px);
 }
 
 /* 두 번째 이미지 (1223 copy, #69:575): x:0 y:0 492x235 */
@@ -561,6 +573,12 @@ nav > ul > li:nth-child(n+2) > span > a {
     background: #FFFFFF;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.04);
     border-radius: 40px;
+    transition: transform 0.3s ease;
+    transform-origin: bottom center;
+}
+
+.big-phone:hover {
+    transform: rotate(5deg) translateY(-4px);
 }
 
 .big-phone .img-box {
