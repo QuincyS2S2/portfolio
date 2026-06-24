@@ -9,7 +9,6 @@ body {
     background: #FBFDF5;
     font-family: "Noto Sans KR", "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
     color: #222222;
-    padding : 60px;
 }
 
 .bg-noise {
@@ -21,6 +20,13 @@ body {
     pointer-events: none;
 }
 
+/* ===== 페이지 래퍼: 1440px 캔버스 중앙 정렬, 좌우 여백 120px ===== */
+.page-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 0;
+}
+
 .stage {
     position: relative;
     z-index: 0;
@@ -29,6 +35,13 @@ body {
     flex-direction: row;
     gap: 32px;
     align-items: flex-start;
+}
+
+/* header(nav) sticky: 스크롤 시 화면 상단에 고정 */
+header {
+    position: sticky;
+    top: 60px;
+    align-self: flex-start;
 }
 
 
@@ -167,21 +180,21 @@ body {
 
 .download-resume-wrap {
     display: flex;
-    padding: 8px 16px;
+    padding: 8px 10px;
     justify-content: space-between;
     align-items: center;
     width : 100%;
     border-radius: 8px;
-    background: #000;
+    background: #222222;
 }
 
 .download-resume-wrap h1 {
     color: #FFF;
-    font-size: 18px;
+    font-size: 20px;
     font-style: normal;
     font-weight: 700;
     line-height: normal;
-    letter-spacing: -0.32px;
+    letter-spacing: -0.02em;
 }
 
 .download-resume-wrap:hover {
@@ -221,6 +234,11 @@ nav > ul > li > ul {
     gap: 4px;
 }
 
+/* 상위 카테고리명 (Web site, Mobile, Graphic) */
+nav > ul > li > span > a {
+    font-size: 16px !important;
+}
+
 
 /* 하위 카테고리의 a 링크: 아이콘 + 텍스트 가로 배치 */
 nav > ul > li > ul > li > a {
@@ -228,7 +246,7 @@ nav > ul > li > ul > li > a {
     align-items: center;
     padding: 4px 4px 4px 6px;
     height: 36px;
-    gap: 12px;
+    gap: 8px;
 }
 
 nav > ul > li > ul > li > a:hover {
@@ -320,7 +338,7 @@ nav > ul > li:nth-child(n+2) > span > a {
 .top-banner .banner-txt h4 {
     color: #222222;
     font-family: "Noto Sans KR";
-    font-size: 26px;
+    font-size: 24px;
     font-weight: 500;
     line-height: 1.5em;
     text-align: left;
@@ -432,7 +450,7 @@ nav > ul > li:nth-child(n+2) > span > a {
     display: flex;
     flex-direction: row;
     align-self: stretch;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     gap: 20px;
 }
@@ -523,55 +541,80 @@ nav > ul > li:nth-child(n+2) > span > a {
     object-fit: cover;
 }
 
-/* ===== 오른쪽: 큰 폰 (#95:535) ===== */
-.big-phone {
-    width: 392px;
-    height: 810px;
+/* ===== 오른쪽 컬럼 (#105:541) ===== */
+.right-column {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 44px;
+    width: 276px;
     flex-shrink: 0;
 }
 
+/* ===== 오른쪽: 큰 폰 (#18:114) ===== */
+.big-phone {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    padding: 16px;
+    gap: 10px;
+    background: #FFFFFF;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.04);
+    border-radius: 40px;
+}
+
 .big-phone .img-box {
-    width: 100%;
-    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 38px;
 }
 
 .big-phone .img-box img {
-    width: 100%;
-    height: 100%;
+    width: 244px;
+    height: 500px;
     object-fit: contain;
 }
 
-/* ===== more-Talk (#22:137) ===== */
+/* ===== right-bottom-group (#105:540) ===== */
+.right-bottom-group {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    align-items: stretch;
+    gap: 14px;
+}
+
+/* ===== more-Talk (#24:170) ===== */
 .more-Talk {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 392px;
 }
 
 .more-Talk h1 {
-    color: #222222;
+    color: #BBDB00;
     font-family: "Noto Sans KR";
-    font-size: 32px;
-    font-weight: 700;
+    font-size: 24px;
+    font-weight: 300;
     letter-spacing: -0.02em;
     line-height: 1.5em;
     text-align: center;
 }
 
-/* ===== 명함 business-card (#22:157) ===== */
+/* ===== 명함 business-card (#69:572) ===== */
 .business-card {
     display: flex;
     flex-direction: column;
-    padding: 24px;
-    gap: 16px;
-    width: 392px;
+    align-self: stretch;
+    padding: 16px 4px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    height: 131px;
     background: #FFFFFF;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.04);
-    border-radius: 30px;
+    border-radius: 20px;
     flex-shrink: 0;
 }
 
@@ -579,7 +622,7 @@ nav > ul > li:nth-child(n+2) > span > a {
 .business-card .mail {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .business-card .icon {
@@ -591,8 +634,8 @@ nav > ul > li:nth-child(n+2) > span > a {
 .business-card h2 {
     color: #222222;
     font-family: "Noto Sans KR";
-    font-size: 20px;
-    font-weight: 500;
+    font-size: 18px;
+    font-weight: 700;
     line-height: normal;
 }
 
