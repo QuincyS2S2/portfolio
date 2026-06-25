@@ -12,26 +12,28 @@
 
 <body>
 
-  <svg class="bg-noise" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <rect width="100%" height="100%" fill="#FBFDF5" filter="url(#paperNoise)" />
+<svg class="bg-noise"
+     xmlns="http://www.w3.org/2000/svg"
+     preserveAspectRatio="none"
+     aria-hidden="true">
     <defs>
-      <filter id="paperNoise">
-        <feTurbulence type="fractalNoise" baseFrequency="0.25 0.25" stitchTiles="stitch" numOctaves="3" seed="9099" result="noise" />
-        <feColorMatrix in="noise" type="luminanceToAlpha" result="alphaNoise" />
-        <feComponentTransfer in="alphaNoise" result="grainAlpha">
-          <feFuncA type="discrete" tableValues="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 " />
-        </feComponentTransfer>
-        <feComposite operator="in" in="grainAlpha" in2="SourceGraphic" result="grainClipped" />
-        <!-- 입자 색/농도: rgba(0,0,0,0.25)에서 마지막 0.25 숫자만 만지면 됨 -->
-        <feFlood flood-color="rgba(0, 0, 0, 0.25)" result="grainColor" />
-        <feComposite operator="in" in="grainColor" in2="grainClipped" result="grain" />
-        <feMerge>
-          <feMergeNode in="SourceGraphic" />
-          <feMergeNode in="grain" />
-        </feMerge>
-      </filter>
+        <filter id="paperNoise">
+            <feTurbulence type="fractalNoise" baseFrequency="0.25 0.25" stitchTiles="stitch" numOctaves="3" seed="9099" result="noise" />
+            <feColorMatrix in="noise" type="luminanceToAlpha" result="alphaNoise" />
+            <feComponentTransfer in="alphaNoise" result="grainAlpha">
+                <feFuncA type="discrete" tableValues="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 " />
+            </feComponentTransfer>
+            <feComposite operator="in" in="grainAlpha" in2="SourceGraphic" result="grainClipped" />
+            <feFlood flood-color="rgba(0, 0, 0, 0.25)" result="grainColor" />
+            <feComposite operator="in" in="grainColor" in2="grainClipped" result="grain" />
+            <feMerge>
+                <feMergeNode in="SourceGraphic" />
+                <feMergeNode in="grain" />
+            </feMerge>
+        </filter>
     </defs>
-  </svg>
+    <rect width="100%" height="100%" fill="#FBFDF5" filter="url(#paperNoise)" />
+</svg>
 
 
   <div class="page-wrapper">
@@ -903,6 +905,9 @@
                     </div>
                 </div>
             </div>
+
+            <!--약쏙-->
+
             <div class="main-work">
                 <div class="main-danawa-wrap">
                     <div class="top-Category">
@@ -914,39 +919,40 @@
                             </div>
                             <h2>Mobile</h2>
                         </div>
-                        <div class="class-title"> <!--다나와 리디자인-->
+                        <div class="class-title"> <!--약쏙디자인-->
                             <div class="logo">
-                                <img src="img/logo/ikoka.png" alt="수족관_로고">
+                                <img src="img/logo/yacksok.png" alt="약쏙 로고_">
                             </div>
-                            <h2>IKOKA</h2>
+                            <h2>약쏙</h2>
                         </div>
                     </div>
                     <div class="post-wrap">
                         <div class="mokup mokup-mobile">
                             <div class="device device-splash">
-                                <img src="img/mockup/ikoka1.png" alt="ikoka 스플래시 화면">
+                                <img src="img/mockup/ya1.png" alt="약쏙 스플래시 화면">
                             </div>
                             <div class="device device-main">
-                                <img src="img/mockup/ikoka2.png" alt="ikoka 메인 화면">
+                                <img src="img/mockup/ya2.png" alt="약쏙 메인 화면">
                             </div>
-                        </div>  <!-- ★ 여기! .mokup-mobile 닫기 (이게 빠져있었음) -->
+                        </div>
 
                         
                         <div class="post-contents">
                             <div class="content-list">
                                 <div class="title-and-tag">
-                                    <h1>IKOKA</h1>
+                                    <h1>약쏙</h1>
                                     <div class="tag-list">
                                         <div class="tag"><p>기획</p></div>
                                         <div class="tag"><p>디자인</p></div>
                                         <div class="tag"><p>코딩</p></div>
+                                        <div class="tag"><p>팀프로젝트</p></div>
                                         <div class="tag"><p>라이브러리 활용</p></div>
                                         <div class="tag"><p>GitHub Pages로 배포</p></div>
                                     </div>
                                 </div>
                                 <div class="story">
-                                    <p>기획부터 앱디자인까지 전반적으로 시도한 일본 전문 여행 어플 이코카(IKOKA). 일본어를 전혀 모르더라도 AI의 도움을 받아 여행할 수 있으며 일본 여행에 대한 커뮤니티, 환전을 진행할 수 있습니다.
-                                        가독성이 좋은 디자인으로 제작하였으며 사용자의 호불호에 따라 일정을 짜주는 AI 캐릭터를 이미지 생성 모델을 사용하여 구현했습니다.
+                                    <p>약쏙은 2인 1조로 팀 협업으로 진행한 프로젝트입니다. 복약 시간 알람을 맞출 수 있으며 약을 함께 복용해도 되는지, 지금 복용 중인 약 끼리의 밸런스는 어떠한지, 몇 개의 약물이 남아있는지 간단하게 체크할 수 있습니다.
+                                        바쁜 현대인 사회 속, 가족의 복약 시간을 체크할 수 있도록 가족 프로필 기능 역시 제공하고 있습니다.
                                         </p>
                                 </div>
                             </div>
@@ -983,11 +989,11 @@
                                 </div>
                                 <div class="time">
                                     <h1>작업 소요 시간</h1>
-                                    <h3>9일</h3>
+                                    <h3>20일</h3>
                                 </div>
                                 <div class="contribution">
                                     <h1>작업 기여도</h1>
-                                    <h3>100%</h3>
+                                    <h3>80%</h3>
                                 </div>
                             </div>
                             <div class="button-group">
@@ -1036,6 +1042,226 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!--해독제-->
+            <div class="main-work">
+                <div class="main-danawa-wrap">
+                    <div class="top-Category">
+                        <div class="class-list"> <!--웹사이트-->
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M7 6.2002V17.8002C7 18.9203 7 19.4801 7.21799 19.9079C7.40973 20.2842 7.71547 20.5905 8.0918 20.7822C8.5192 21 9.07899 21 10.1969 21H13.8031C14.921 21 15.48 21 15.9074 20.7822C16.2837 20.5905 16.5905 20.2842 16.7822 19.9079C17 19.4805 17 18.9215 17 17.8036V6.19691C17 5.07899 17 4.5192 16.7822 4.0918C16.5905 3.71547 16.2837 3.40973 15.9074 3.21799C15.4796 3 14.9203 3 13.8002 3H10.2002C9.08009 3 8.51962 3 8.0918 3.21799C7.71547 3.40973 7.40973 3.71547 7.21799 4.0918C7 4.51962 7 5.08009 7 6.2002Z" stroke="#0088FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <h2>Mobile</h2>
+                        </div>
+                        <div class="class-title"> <!--해독제 디자인-->
+                            <div class="logo">
+                                <img src="img/logo/hedokje.png" alt="해독제 로고_">
+                            </div>
+                            <h2>해독제</h2>
+                        </div>
+                    </div>
+                    <div class="post-wrap">
+                        <div class="mokup mokup-mobile">
+                            <div class="device device-splash">
+                                <img src="img/mockup/headok1.png" alt="해독제 스플래시 화면">
+                            </div>
+                            <div class="device device-main">
+                                <img src="img/mockup/headok2.png" alt="해독제 메인 화면">
+                            </div>
+                        </div>
+
+                        
+                        <div class="post-contents">
+                            <div class="content-list">
+                                <div class="title-and-tag">
+                                    <h1>해독제</h1>
+                                    <div class="tag-list">
+                                        <div class="tag"><p>기획</p></div>
+                                        <div class="tag"><p>디자인</p></div>
+                                        <div class="tag"><p>코딩</p></div>
+                                        <!-- <div class="tag"><p>라이브러리 활용</p></div> -->
+                                        <div class="tag"><p>GitHub Pages로 배포</p></div>
+                                    </div>
+                                </div>
+                                <div class="story">
+                                    <p>해독제는 구독제를 취소한다는 해독(解)의 의미를 가진 어플입니다. 대형 회사들 마저 일시불 판매보다 구독제 판매를 선호하고 있는 상황 속, 어느새 잊고 있었던 구독 제품을 관리하고 솔루션을 제안합니다.
+                                        </p>
+                                </div>
+                            </div>
+                            <div class="use-information">
+                                <div class="program-used"><!--사용했던 프로그램-->
+                                    <h1>사용 프로그램</h1>
+                                    <ul>
+                                        <li>
+                                            <div class="img">
+                                                <img src="img/icon/html.png" alt="html">
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="img">
+                                                <img src="img/icon/css.png" alt="css">
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="img">
+                                                <img src="img/icon/js.png" alt="js">
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="img">
+                                                <img src="img/icon/github.png" alt="github">
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="img">
+                                                <img src="img/icon/figma.png" alt="figma">
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="time">
+                                    <h1>작업 소요 시간</h1>
+                                    <h3>20일</h3>
+                                </div>
+                                <div class="contribution">
+                                    <h1>작업 기여도</h1>
+                                    <h3>80%</h3>
+                                </div>
+                            </div>
+                            <div class="button-group">
+                                <!-- 이동: 링크 -->
+                                <a href="https://..." class="btn btn--primary" target="_blank" rel="noopener">
+                                    <span class="icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38" fill="none">
+                                        <path d="M4.75 19H12.6667M4.75 19C4.75 26.8701 11.1299 33.25 19 33.25M4.75 19C4.75 11.1299 11.1299 4.75 19 4.75M12.6667 19H25.3333M12.6667 19C12.6667 26.8701 15.5022 33.25 19 33.25M12.6667 19C12.6667 11.1299 15.5022 4.75 19 4.75M25.3333 19H33.25M25.3333 19C25.3333 11.1299 22.4978 4.75 19 4.75M25.3333 19C25.3333 26.8701 22.4978 33.25 19 33.25M33.25 19C33.25 11.1299 26.8701 4.75 19 4.75M33.25 19C33.25 26.8701 26.8701 33.25 19 33.25" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    <span>사이트로 이동</span>
+                                </a>
+
+                                <a href="https://github.com/..." class="btn btn--ghost" target="_blank" rel="noopener">
+                                    <span class="icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38" fill="none">
+                                        <path d="M16.5312 25.8426C12.4062 25.3426 9.5 22.3734 9.5 18.5292C9.5 16.9665 10.0625 15.2788 11 14.1537C10.5937 13.1223 10.6562 10.9345 11.125 10.0282C12.375 9.87191 14.0625 10.5283 15.0625 11.4346C16.25 11.0596 17.5 10.872 19.0312 10.872C20.5625 10.872 21.8125 11.0596 22.9375 11.4034C23.9062 10.5283 25.625 9.87191 26.875 10.0282C27.3125 10.872 27.375 13.0598 26.9687 14.1224C27.9687 15.3101 28.5 16.904 28.5 18.5292C28.5 22.3734 25.5937 25.2801 21.4062 25.8113C22.4687 26.4989 23.1875 27.9991 23.1875 29.7181V32.9686C23.1875 33.906 23.9687 34.4374 24.9062 34.0624C30.5625 31.9058 35 26.2489 35 19.248C35 10.4032 27.8125 3.18359 18.9687 3.18359C10.125 3.18359 3 10.4032 3 19.248C3 26.1864 7.40623 31.9371 13.3437 34.0937C14.1875 34.4061 15 33.8437 15 32.9999V30.4994C14.5625 30.6869 14 30.812 13.5 30.812C11.4375 30.812 10.2187 29.6868 9.34373 27.5928C9 26.749 8.625 26.2489 7.90623 26.1552C7.53123 26.1239 7.40623 25.9676 7.40623 25.7801C7.40623 25.4051 8.03123 25.1238 8.65623 25.1238C9.5625 25.1238 10.3437 25.6863 11.1562 26.8427C11.7812 27.7491 12.4375 28.1554 13.2187 28.1554C14 28.1554 14.5 27.8741 15.2187 27.1553C15.75 26.6239 16.1562 26.1552 16.5312 25.8426Z" fill="#222222"/>
+                                        </svg>
+                                    </span>
+                                    <span>깃허브로 이동</span>
+                                </a>
+
+                                <!-- 동작: 버튼 -->
+                                <button type="button" class="btn" data-modal="plan">
+                                    <span class="icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38" fill="none">
+                                        <path d="M23.7489 28.5006L21.1243 25.8761M20.5838 4.75138C20.4325 4.75 20.2624 4.75 20.0681 4.75H12.9835C11.21 4.75 10.3226 4.75 9.64518 5.09515C9.04934 5.39875 8.56525 5.88283 8.26165 6.47868C7.9165 7.15607 7.9165 8.04348 7.9165 9.81698V28.1836C7.9165 29.9571 7.9165 30.8434 8.26165 31.5208C8.56525 32.1167 9.04934 32.6016 9.64518 32.9052C10.3219 33.25 11.2083 33.25 12.9783 33.25L25.0214 33.25C26.7914 33.25 27.6765 33.25 28.3532 32.9052C28.9491 32.6016 29.4348 32.1167 29.7384 31.5208C30.0832 30.8441 30.0832 29.959 30.0832 28.189V14.7657C30.0832 14.5714 30.083 14.4013 30.0816 14.25M20.5838 4.75138C21.0357 4.7555 21.3206 4.77227 21.5936 4.83783C21.9167 4.9154 22.2264 5.04334 22.5098 5.21696C22.8292 5.41273 23.1035 5.68704 23.6509 6.23438L28.5996 11.1831C29.1472 11.7307 29.4195 12.0038 29.6154 12.3234C29.789 12.6067 29.9175 12.9157 29.995 13.2388C30.0606 13.5118 30.0775 13.798 30.0816 14.25M20.5838 4.75138L20.5832 9.18366C20.5832 10.9572 20.5832 11.8436 20.9283 12.521C21.2319 13.1168 21.716 13.6016 22.3118 13.9052C22.9886 14.25 23.8749 14.25 25.645 14.25H30.0816M18.2082 26.9167C16.022 26.9167 14.2498 25.1445 14.2498 22.9583C14.2498 20.7722 16.022 19 18.2082 19C20.3943 19 22.1665 20.7722 22.1665 22.9583C22.1665 25.1445 20.3943 26.9167 18.2082 26.9167Z" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    <span>기획서 확인</span>
+                                </button>
+
+                                <button type="button" class="btn" data-modal="mockup">
+                                    <span class="icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38" fill="none">
+                                        <path d="M28.1882 31.6668L31.339 31.6668C32.0236 31.6668 32.3663 31.6668 32.654 31.5493C32.908 31.4456 33.1315 31.2769 33.301 31.0612C33.4931 30.8168 33.5875 30.488 33.7757 29.8294L35.4948 23.8128C35.808 22.7165 35.9638 22.1683 35.8407 21.7347C35.733 21.3548 35.4874 21.0289 35.1518 20.8209C34.7908 20.5973 34.2634 20.5843 33.2503 20.5835M28.1882 31.6668H9.81177M28.1882 31.6668C29.9583 31.6668 30.8433 31.6668 31.52 31.322C32.1159 31.0184 32.6016 30.5333 32.9052 29.9375C33.2503 29.2601 33.2503 28.3734 33.2503 26.5999V20.5835M9.81177 31.6668H8.1084C6.96908 31.6668 6.39785 31.6668 6.01481 31.4295C5.67915 31.2215 5.43311 30.8955 5.32534 30.5156C5.30264 30.4356 5.28949 30.3517 5.2851 30.2611M9.81177 31.6668C8.04174 31.6668 7.1554 31.6668 6.47868 31.322C5.99488 31.0755 5.58475 30.7091 5.2851 30.2611M33.2503 20.5835C33.188 20.5835 33.1238 20.5835 33.0577 20.5835H7.91711L5.6731 28.4375L5.66985 28.4485C5.41632 29.3358 5.26581 29.8626 5.2851 30.2611M33.2503 20.5835L33.2503 14.5665C33.2503 12.793 33.2503 11.9062 32.9052 11.2288C32.6016 10.633 32.1162 10.1489 31.5203 9.84531C30.843 9.50016 29.9568 9.50016 28.1833 9.50016H19M5.2851 30.2611C5.21571 30.1574 5.15224 30.0492 5.09515 29.9372C4.75 29.2598 4.75 28.3737 4.75 26.6002V9.50016M4.75 9.50016H19M4.75 9.50016C4.75 7.75126 6.16777 6.3335 7.91667 6.3335H13.7347C14.5092 6.3335 14.8974 6.3335 15.2618 6.42099C15.5849 6.49856 15.8933 6.62683 16.1766 6.80046C16.4961 6.99623 16.7704 7.27054 17.3177 7.81787L19 9.50016" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                    <span>목업 보기</span>
+                                </button>
+                            </div>
+
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--그래픽 파트-->
+            <!--그래픽-->
+            <div class="main-work">
+            <div class="main-danawa-wrap">
+                <div class="top-Category">
+                <div class="class-list">
+                    <div class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z" stroke="#0088FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="13" r="3" stroke="#0088FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    </div>
+                    <h2>Graphic</h2>
+                </div>
+                </div>
+
+                <div class="post-grid graphic-grid">
+                <!-- ① 편집 디자인 (1:1) -->
+                <div class="post-wrap" data-modal="graphic-edit">
+                    <div class="img-box">
+                    <img src="img/thum/book.png" alt="편집 디자인">
+                    <div class="img-overlay">
+                        <p class="overlay-desc">간행물·에디토리얼 편집 디자인</p>
+                        <span class="overlay-cue">자세히 보기
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M18.3643 12.7073L18.3646 5.63623H11.2939M18.3646 5.63623L5.63672 18.3642" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        </span>
+                    </div>
+                    </div>
+                    <h4 class="title-h4">편집 디자인</h4>
+                </div>
+
+                <!-- ② 제품 패키지 디자인 (1:1) -->
+                <div class="post-wrap" data-modal="graphic-package">
+                    <div class="img-box">
+                    <img src="img/thum/pack.png" alt="제품 패키지 디자인">
+                    <div class="img-overlay">
+                        <p class="overlay-desc">브랜드 톤을 입힌 제품 패키지</p>
+                        <span class="overlay-cue">자세히 보기
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M18.3643 12.7073L18.3646 5.63623H11.2939M18.3646 5.63623L5.63672 18.3642" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        </span>
+                    </div>
+                    </div>
+                    <h4 class="title-h4">제품 패키지 디자인</h4>
+                </div>
+
+                <!-- ③ 배너 광고물 (2/3) -->
+                <div class="post-wrap" data-modal="graphic-banner">
+                    <div class="img-box">
+                    <img src="img/thum/banner.png" alt="배너 광고물">
+                    <div class="img-overlay">
+                        <p class="overlay-desc">클릭을 부르는 배너 광고 시리즈</p>
+                        <span class="overlay-cue">자세히 보기
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M18.3643 12.7073L18.3646 5.63623H11.2939M18.3646 5.63623L5.63672 18.3642" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        </span>
+                    </div>
+                    </div>
+                    <h4 class="title-h4">배너 광고물</h4>
+                </div>
+
+                <!-- ④ AI 생성물 (1/3) -->
+                <div class="post-wrap" data-modal="graphic-ai">
+                    <div class="img-box">
+                    <img src="img/thum/ai.png" alt="AI 생성물">
+                    <div class="img-overlay">
+                        <p class="overlay-desc">AI를 활용한 비주얼 실험</p>
+                        <span class="overlay-cue">자세히 보기
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M18.3643 12.7073L18.3646 5.63623H11.2939M18.3646 5.63623L5.63672 18.3642" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        </span>
+                    </div>
+                    </div>
+                    <h4 class="title-h4">AI 생성물</h4>
+                </div>
+                </div>
+
+            </div>
             </div>
 
 
