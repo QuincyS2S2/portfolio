@@ -1,0 +1,2216 @@
+@charset "UTF-8";
+
+/* =========================================================================
+   Portfolio — style.css
+   레이아웃 기준: 고정 폭 데스크톱 캔버스 (콘텐츠 폭 1200px)
+   사이드바 276 + gap 32 + 메인 584 + gap 32 + 우측 276 = 1200
+   ※ 픽셀값은 Figma 기준 그대로 유지. 주석/베이스/인터랙션만 보강.
+   ========================================================================= */
+
+
+/* =========================================================================
+   토큰 — 모서리/간격/그림자/색을 한 곳에서 관리 (2026: 일관된 스케일)
+   ========================================================================= */
+:root {
+    /* 폭 */
+    --post-w: 100%;           /* 포스트 폭 = 메인 컬럼 폭. 900px는 1200 캔버스에서
+                                 양쪽 276 컬럼과 공존 불가 → nav 겹침의 원인이었음 */
+
+    /* 포스트 사이 세로 간격 */
+    --gap-post: 120px;
+    --gap-post-first: 80px;   /* 스케치 영역과 첫 포스트 사이 */
+
+    /* 모서리 (랜덤하게 30/40/20/10 섞지 말고 스케일로) */
+    --r-card: 30px;           /* 큰 카드: 사이드바/포스트 */
+    --r-soft: 20px;           /* 중간: 칩/명함/앱바 */
+    --r-btn:  12px;           /* 버튼/태그 등 작은 컨트롤 */
+
+    /* 그림자 */
+    --shadow-card: 0 0 20px 0 rgba(0, 0, 0, 0.04);
+    --shadow-lift: 0 12px 28px rgba(0, 0, 0, 0.10);
+
+    /* 색 */
+    --accent: #F6FF00;        /* 형광 옐로 (시그니처) */
+    --ink:    #222;
+    --muted:  #8E8E93;        /* 본문 보조색 — #D1D1D6은 너무 옅어 가독성 ↓ */
+    --line:   #E5E5EA;
+}
+
+
+/* =========================================================================
+   0. Reset & Base
+   ========================================================================= */
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 장식 제거는 해당 요소에만 한정 (전역 *에 거는 것보다 의도가 분명함) */
+a  { text-decoration: none; }
+ul, ol { list-style: none; }
+
+html {
+    width: 100%;
+    min-height: 100%;
+    background: #FBFDF5; /* 안전망은 html로 올림 */
+    scroll-behavior: smooth;   /* nav 클릭 시 부드럽게 스크롤 */
+}
+
+body {
+    background: transparent; 
+    font-family: "Noto Sans KR", "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+    color: #222222;
+
+    /* 기준 폰트/행간: 문서 전체 타이포의 베이스라인 */
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+/* 이미지가 부모를 넘지 않게 + 인라인 여백(baseline gap) 제거 — 반응형 안전장치 */
+img {
+    display: block;
+    max-width: 100%;
+}
+
+/* 키보드 탐색 시에만 포커스 링 노출 (마우스 클릭 땐 안 뜸) */
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid #0088FF;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+
+.bg-noise {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;            /* 모든 콘텐츠 뒤로 */
+    pointer-events: none;   /* 노이즈가 클릭을 가로채지 않도록 */
+}
+
+
+/* =========================================================================
+   1. Layout — 페이지 래퍼 / 스테이지
+   ========================================================================= */
+
+/* 콘텐츠 1200px 캔버스 중앙 정렬, 상하 여백 60px */
+.page-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 0;
+}
+
+.stage {
+    position: relative;
+    z-index: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+    align-items: flex-start;
+}
+
+/* nav를 스크롤 내내 상단 고정 */
+header {
+    position: sticky;
+    top: 60px;
+    align-self: flex-start;
+    flex-shrink: 0;          /* nav 폭(276) 절대 안 줄어들게 */
+}
+
+/* ── 2컬럼 구조: 좌측 sticky nav + 우측 와이드 콘텐츠 ──
+   콘텐츠는 nav를 뺀 나머지(1200 - 276 - 32 = 892)를 전부 차지.
+   → 포스트가 좁아지지 않고 와이드하게 펼쳐짐. */
+.content {
+    flex: 1 1 auto;
+    min-width: 0;            /* 내부 고정폭이 콘텐츠를 밀어 넘치는 것 방지 */
+    display: flex;
+    flex-direction: column;
+}
+
+/* 히어로: 배너영역(좌 584) + 쇼케이스(우 276) 나란히 */
+.hero {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;         /* 1200 미만에서 우측 컬럼이 아래로 떨어지게(가드) */
+    gap: 32px;
+    align-items: flex-start;
+    align-self: stretch;
+}
+
+/* 히어로 좌측 = 예전 .main-bord-wrap 역할(배너+스케치 584 컬럼) */
+.hero-left {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 32px;
+    width: 584px;
+    flex-shrink: 0;
+    min-width: 0;
+    /* 좌측 컬럼을 우측(폰+명함) 높이만큼 늘림
+       → 아래 .img-sketch의 margin-top:auto가 바닥으로 밀려날 공간을 만듦 */
+    align-self: stretch;
+}
+
+/* 포스트 묶음: 콘텐츠 폭 전체(≈892)를 차지하며 세로로 쌓임 */
+.posts {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    width: 100%;
+}
+
+
+/* =========================================================================
+   2. 사이드바 (navBar)
+   ========================================================================= */
+
+.navBar {
+    display: flex;
+    width: 276px;
+    padding: 20px;
+    flex-direction: column;
+    align-items: stretch;   /* 자식들이 가로폭을 꽉 채움 */
+    gap: 24px;
+    border-radius: 30px;
+    background: #FFF;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.04);
+}
+
+/* --- macOS 스타일 신호등 --- */
+.mac-style-traffic-light {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mac-style-traffic-light > div {
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+}
+
+.mac-style-traffic-light > div:first-child  { background-color: #F87970; }
+.mac-style-traffic-light > div:nth-child(2) { background-color: #FFB923; }
+.mac-style-traffic-light > div:last-child   { background-color: #92DDA7; }
+
+/* --- 프로필 영역 --- */
+.top-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.user-profile {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.name-wrap {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;           /* 긴 이름이 옆 아이콘을 밀어내지 않도록 */
+}
+
+.name-wrap > h1 {           /* 이름 (김은지) */
+    color: #222;
+    font-family: "Noto Sans KR";
+    font-size: 26px;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.name-wrap .sub-name-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.name-wrap .sub-name-wrap span {
+    color: #999;
+    font-family: "Noto Sans KR";
+    font-size: 18px;
+    font-weight: 400;
+    line-height: normal;
+}
+
+/* --- 집 아이콘 + 호버 말풍선 --- */
+.home-where {
+    position: relative;
+}
+
+.home-where .icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.my-home {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);   /* 등장 시 살짝 아래→제자리 */
+    margin-bottom: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    white-space: nowrap;
+    z-index: 10;
+
+    /* display:none 대신 opacity/visibility로 전환 → 페이드 인 가능 */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.home-where:hover .my-home {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.my-home h4 {
+    display: flex;
+    padding: 4px 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 99px;
+    background: #F8FF43;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    color: #222;
+}
+
+.my-home .triangle      { margin-top: -4px; line-height: 0; }
+.my-home .triangle svg  { display: block; }
+
+/* --- 이력서 다운로드 버튼 --- */
+.download-resume-wrap {
+    display: flex;
+    padding: 8px 10px;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    border-radius: 8px;
+    background: #222222;
+    cursor: pointer;
+    transition: box-shadow 0.25s ease, transform 0.25s ease;   /* hover 부드럽게 */
+}
+
+.download-resume-wrap:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);    /* 살짝 떠오르는 피드백 */
+}
+
+.download-resume-wrap h1 {
+    color: #FFF;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: normal;
+    letter-spacing: -0.02em;
+}
+
+/* 공통 아이콘 박스 기본 크기 */
+.icon {
+    width: 24px;
+    height: 24px;
+}
+
+/* --- 네비게이션 --- */
+nav > ul {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    /* 노트북 높이에서 nav가 잘리지 않도록 카테고리 간격 축소 */
+    gap: 22px;
+}
+
+nav > ul > li {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+}
+
+/* "메인 보드"처럼 하위 ul이 없는 첫 항목은 아이콘+텍스트 가로 배치 */
+nav > ul > li:first-child {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 하위 카테고리 ul */
+nav > ul > li > ul {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* 상위 카테고리명 (Web site, Mobile, Graphic) */
+nav > ul > li > span > a {
+    font-size: 16px !important;
+}
+
+/* 하위 카테고리 링크: 아이콘 + 텍스트 가로 배치 */
+nav > ul > li > ul > li > a {
+    display: flex;
+    align-items: center;
+    padding: 4px 4px 4px 6px;
+    height: 36px;
+    gap: 8px;
+    border-radius: 8px;                 /* 호버 배경을 깔 때를 대비한 모서리 */
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+nav > ul > li > ul > li > a:hover {
+    color: #222;
+}
+
+/* 호버 시 아이콘 색 동기화 — stroke 기반 아이콘 */
+nav > ul > li > ul > li > a:hover .icon svg path {
+    stroke: #222;
+    transition: stroke 0.2s ease;
+}
+
+/* 호버 시 아이콘 색 동기화 — fill 기반 아이콘 */
+nav > ul > li > ul > li > a:hover .icon svg path[fill="#727272"] {
+    fill: #222;
+    transition: fill 0.2s ease;
+}
+
+/* 링크 기본 타이포 */
+a {
+    color: #727272;
+    font-family: "Noto Sans KR";
+    font-size: 18px;
+    font-weight: 500;
+    line-height: normal;
+}
+
+/* 상위 카테고리(Web site/Mobile/Graphic):
+   형광펜(노란 배경) 제거 → 사이트 이동 버튼의 노란색과 충돌 해소.
+   대신 Poppins 타이틀 폰트로 가볍게 차별화 (구글 타이틀 무드) */
+nav > ul > li:nth-child(n+2) > span > a {
+    display: inline-block;
+    padding: 2px 0;
+    font-family: "Poppins", "Noto Sans KR", sans-serif;
+    color: #222 !important;
+    font-size: 17px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.01em;
+    transition: color .2s ease, letter-spacing .2s ease;
+}
+
+/* 호버 시 카테고리 아이콘색(파랑)과 맞춰 살짝 강조 */
+nav > ul > li:nth-child(n+2) > span > a:hover {
+    color: #0088FF !important;
+    letter-spacing: 0.03em;
+}
+
+/* 메인 보드: 최상위 메뉴라 또렷하게 */
+nav > ul > li:first-child > span > a {
+    color: #222;
+    font-weight: 600;
+}
+
+nav > ul > li > ul > li > a {
+    font-size: 15px;
+    color: #555;
+}
+
+
+
+
+
+/* =========================================================================
+   3. 메인 보드
+   ========================================================================= */
+
+/* (구) .main-bord-wrap → .hero-left 로 대체됨 (3컬럼 → 2컬럼 전환) */
+
+/* --- 배너 그룹 --- */
+.banner-group {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    align-items: stretch;
+    gap: 24px;
+}
+
+.banner-row {
+    display: flex;
+    flex-direction: row;
+    align-self: stretch;
+    justify-content: space-between;
+    gap: 16px;              /* space-between만 의존하지 않도록 최소 간격 확보 */
+}
+
+/* --- 중앙 소개 배너 --- */
+.top-banner {
+    display: flex;
+    flex-direction: row;
+    padding: 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    width: 379px;
+    align-self: stretch;
+    background: #FFFFFF;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.04);
+    border-radius: 40px;
+}
+
+.top-banner .img-face {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #D9D9D9;
+}
+
+.top-banner .img-face img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.top-banner .banner-txt { min-width: 0; }
+
+.top-banner .banner-txt h4 {
+    color: #222222;
+    font-family: "Noto Sans KR";
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.5em;
+    text-align: left;
+}
+
+.top-banner .banner-txt h4 .ts1 { color: #FFCC00; }   /* 편의성, 디자인 강조 */
+.top-banner .banner-txt h4 .ts2 { color: #222222; }   /* 기본색 */
+
+/* --- core 배너 (기획→구현) --- */
+.core-banner {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 173px;
+    flex-shrink: 0;
+    background: #FFFFFF;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.04);
+    border-radius: 40px;
+}
+
+.core-banner .img {
+    width: 88px;
+    height: 88px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.core-banner .img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.core-banner p {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 4px;
+    color: #222222;
+    font-family: "Noto Sans KR";
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.5em;
+    white-space: nowrap;
+}
+
+.core-banner p span { flex-shrink: 0; white-space: nowrap; }
+.core-banner p span:first-child { color: #FF8D28; }   /* 기획 */
+.core-banner p span:last-child  { color: #0088FF; }   /* 구현 */
+
+/* --- 사용 앱 배너 --- */
+.use-app-banner {
+    display: flex;
+    flex-direction: row;
+    align-self: stretch;
+    padding: 10px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    height: 68px;
+    background: #FFFFFF;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.04);
+    border-radius: 20px;
+}
+
+.use-app-banner li {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.use-app-banner li img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* 평소엔 회색조 + 살짝 흐리게 → 정보 과잉 완화 */
+    filter: grayscale(1);
+    opacity: 0.65;
+    transition: transform 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
+}
+
+/* 호버한 아이콘만 원래 색으로 살아남 */
+.use-app-banner li:hover img {
+    transform: scale(1.15);     /* 아이콘 호버 시 살짝 확대 */
+    filter: grayscale(0);
+    opacity: 1;
+}
+
+/* --- 파일(폴더) 배너 --- */
+.file-banner {
+    display: flex;
+    flex-direction: row;
+    align-self: stretch;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    /* 남는 세로 여백을 폴더 위/아래로 균등 분배 → 폴더가 구간 정중앙에 옴.
+       (.img-sketch의 margin-top:auto와 한 쌍 → free space를 정확히 반씩 나눔) */
+    margin-top: auto;
+}
+
+.file-banner > ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;     /* 폴더가 '바닥에 선' 느낌 — 까딱 회전과 잘 맞음 */
+    gap: 16px;                 /* 우측 이력 카드 자리 확보를 위해 살짝 좁힘 */
+}
+
+.file-banner > ul li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    /* 폴더 까딱 효과:
+       회전축을 아래(bottom)에 둬서 '발끝은 붙고 몸통이 기우는' 경첩 느낌 */
+    transform-origin: bottom center;
+    transition: transform 0.3s ease;
+}
+
+.file-banner > ul li:hover {
+    transform: translateY(-3px) rotate(-3deg);   /* 살짝 들리며 옆으로 까딱 */
+}
+
+/* 이미지 50% 축소 (164→82). 첫 번째만 살짝 넓게 */
+.file-banner > ul li:first-child      { width: 97px; }
+.file-banner > ul li:not(:first-child){ width: 82px; }
+
+.file-banner > ul li .img-box {
+    width: 82px;
+    height: 84px;
+    position: relative;
+    overflow: hidden;
+}
+
+.file-banner > ul li .img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.file-banner > ul li p {
+    color: #222222;
+    font-family: "Noto Sans KR";
+    font-size: 15px;           /* 폴더 라벨도 함께 축소 (24→15) */
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    text-align: center;
+    line-height: 1.5em;
+}
+
+
+/* =========================================================================
+   간단 이력 카드 — 폴더 우측 빈 공간을 채움.
+   토글(디자인 / 문학)에 따라 이력 리스트가 전환됨. (피그마 187:1079 / 187:1094)
+   ========================================================================= */
+.history-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 250px;
+    height: 250px;          /* 고정 높이 → 항목이 넘치면 리스트가 안에서 스크롤 */
+    flex-shrink: 0;
+    padding: 16px;
+    background: #FFF;
+    border-radius: 20px;
+    box-shadow: var(--shadow-card);
+}
+
+.history-head {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;   /* 토글이 카드 폭을 꽉 채우도록 */
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.history-head h3 {
+    width: 100%;
+    color: #222;
+    font-family: "Noto Sans KR";
+    font-size: 16px;
+    font-weight: 500;
+    line-height: normal;
+}
+
+/* --- 세그먼트 토글 --- */
+.history-toggle {
+    display: flex;
+    align-items: center;
+    width: 100%;            /* 좁은 영역 전체를 채우는 흔한 토글 형태 */
+    background: #F2F2F2;
+    border-radius: 8px;
+}
+
+.history-toggle .seg {
+    flex: 1 1 0;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid transparent;   /* active와 크기 통일 → 클릭 시 깜빡임/이동 방지 */
+    border-radius: 8px;
+    background: transparent;
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: #8E8E93;
+    cursor: pointer;
+    transition: color .2s ease, background-color .2s ease, border-color .2s ease;
+}
+
+.history-toggle .seg.active {
+    background: #FFF;
+    border-color: #F1F1F1;
+    color: #222;
+}
+
+/* 호버: 애플식으로 아주 옅은 회색만 (과한 효과 X) */
+.history-toggle .seg:hover {
+    background: rgba(120, 120, 128, 0.08);
+}
+.history-toggle .seg.active:hover {
+    background: #F7F7F7;
+}
+
+/* --- 이력 리스트 (고정 높이 카드 안에서 세로 스크롤) --- */
+.history-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    flex: 1 1 0;
+    min-height: 0;          /* flex 자식이 줄어들어 스크롤이 생기게 */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    word-break: keep-all;   /* 한글이 음절 중간이 아닌 어절 단위로 줄바꿈 */
+    scrollbar-width: thin;                       /* Firefox */
+    scrollbar-color: #D1D1D6 transparent;
+}
+
+/* 얇고 깔끔한 스크롤바 (WebKit) */
+.history-list::-webkit-scrollbar { width: 6px; }
+.history-list::-webkit-scrollbar-thumb {
+    background: #D1D1D6;
+    border-radius: 3px;
+}
+.history-list::-webkit-scrollbar-track { background: transparent; }
+
+.history-list[hidden] { display: none; }
+
+.history-list > li {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;   /* 본문 왼쪽 정렬 (가운데정렬 X) */
+    gap: 2px;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background-color .15s ease;
+}
+
+/* 애플식 글 목록: 행 hover 시 아주 옅은 회색만 */
+.history-list > li:hover {
+    background: rgba(120, 120, 128, 0.08);
+}
+
+/* 항목 사이 구분선 */
+.history-list > li:not(:last-child) {
+    border-bottom: 1px solid var(--line);
+}
+
+/* 구분선과 맞닿는 모서리는 각지게(radius 0), 선 없는 변만 둥글게.
+   → 위에 선 있으면(첫 항목 아님) 상단 0, 아래 선 있으면(마지막 아님) 하단 0.
+   항목이 몇 개든 첫/중간/마지막 모두 자동으로 올바르게 처리됨. */
+.history-list > li:not(:first-child) {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.history-list > li:not(:last-child) {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.history-list .hl-title {
+    color: #222;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.history-list .hl-sub {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: normal;
+}
+
+
+/* =========================================================================
+   3.5 새 소개 벤또 디자인 (Figma 204:1276)
+   - hero-left 상단의 (구) banner-group + file-banner 를 대체.
+   - 3행 구조: 소개 카드 3개 → 사용 앱 아이콘 바 → 간단 이력 + 프로필/수족관.
+   ========================================================================= */
+.intro-bento {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    /* 스케치·약통 삭제로 생긴 하단 여백을 카드 사이 간격으로 흡수 */
+    gap: 32px;
+    width: 100%;
+}
+
+/* 강조 색상 (텍스트 span) */
+.intro-bento .c-yellow { color: #FFCC00; }   /* 창의력 */
+.intro-bento .c-purple { color: #6155F5; }   /* 사용자 / 코딩 */
+.intro-bento .c-orange { color: #FF8D28; }   /* UI UX */
+
+/* --- 공통 카드 베이스 --- */
+.intro-bento .ib-card {
+    box-sizing: border-box;
+    height: 156px;
+    /* 패딩을 줄여 카드 사이 간격(gap)을 더 확보 */
+    padding: 12px;
+    display: flex;
+    background: #FFF;
+    border-radius: 40px;
+    box-shadow: var(--shadow-card);
+}
+
+.intro-bento .ib-txt {
+    color: #222;
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.5em;
+    word-break: keep-all;   /* 한글 어절 단위 줄바꿈 */
+}
+
+/* --- 1행: 소개 카드 3개 --- */
+.intro-bento .ib-row-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+}
+
+/* 창의력을 시작으로 (맵핀) */
+.intro-bento .ib-pin {
+    width: 150px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+}
+.intro-bento .ib-pin-svg {
+    width: 27.49px;
+    height: 36px;
+    display: block;
+    flex-shrink: 0;
+}
+.intro-bento .ib-pin-txt { text-align: center; }
+
+/* 사용자의 니즈를 파악 (인물) */
+.intro-bento .ib-user {
+    width: 224px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+}
+.intro-bento .ib-user-img {
+    width: 64px;
+    height: 109px;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+.intro-bento .ib-user-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.intro-bento .ib-user-txt { text-align: left; }
+
+/* UI UX부터 코딩까지 (공구) */
+.intro-bento .ib-tool {
+    width: 166px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.intro-bento .ib-tool-img {
+    width: 41px;
+    height: 41px;
+    flex-shrink: 0;
+}
+.intro-bento .ib-tool-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.intro-bento .ib-tool-txt { text-align: center; }
+
+/* --- 2행: 사용 앱 아이콘 바 --- */
+.intro-bento .ib-apps {
+    box-sizing: border-box;
+    list-style: none;
+    margin: 0;
+    width: 100%;
+    height: 68px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: #FFF;
+    border-radius: 20px;
+    box-shadow: var(--shadow-card);
+}
+.intro-bento .ib-apps li {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.intro-bento .ib-apps li img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* 평소엔 회색조 + 살짝 흐리게 → 차분하게. 호버한 아이콘만 색이 살아남 */
+    filter: grayscale(1);
+    opacity: 0.65;
+    transition: transform 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
+}
+.intro-bento .ib-apps li:hover img {
+    transform: scale(1.12);
+    filter: grayscale(0);
+    opacity: 1;
+}
+
+/* 간단 이력 카드: 우측 컬럼(폰 목업 아래)으로 이동 → 컬럼 폭에 맞춰 stretch.
+   height는 기본 .history-card의 250px 유지 → 디자인/문학 토글 시 높이 안 흔들림 */
+.right-column .ib-history {
+    width: auto;
+}
+
+/* 3행: AI 생성 프로필/영상 카드 — full-width */
+.intro-bento .ib-profile {
+    box-sizing: border-box;
+    width: auto;            /* intro-bento 폭(584)에 맞춰 stretch */
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    background: #FFF;
+    border-radius: 20px;
+    box-shadow: var(--shadow-card);
+}
+.intro-bento .ib-profile-head {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    flex-shrink: 0;
+}
+.intro-bento .ib-avatar {
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #D9D9D9;
+}
+.intro-bento .ib-profile-meta {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.intro-bento .ib-name {
+    color: #222;
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: normal;
+}
+.intro-bento .ib-role {
+    color: #A3ACB1;
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: normal;
+}
+/* AI 활용 설명 문단 */
+.intro-bento .ib-profile .txt p {
+    color: #555;
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.6;
+    word-break: keep-all;
+}
+.intro-bento .ib-screen {
+    flex: 0 0 auto;
+    height: 288px;          /* full-width 영상 높이 고정 (우측 컬럼과 높이 균형) */
+    border-radius: 20px;
+    overflow: hidden;
+    background: #222;
+}
+.intro-bento .ib-screen video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+
+/* =========================================================================
+   4. 스케치 이미지 영역
+   ========================================================================= */
+
+.img-sketch {
+    width: 583px;
+    height: 235px;
+    position: relative;
+    /* 스케치+약통 묶음을 좌측 컬럼 맨 아래로 밀어
+       우측 명함(SNS 카드) 하단과 세로 높이를 맞춤 */
+    margin-top: auto;
+}
+
+.img-sketch .main-img-box {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.img-sketch .main-img-box .img-box {
+    position: absolute;
+}
+
+/* 1) 뒤에 깔린 스케치 종이 (sketch.png) — 약통 뒤에 살짝 보임 */
+.img-sketch .main-img-box .img-box:nth-child(1) {
+    left: 194px;
+    top: 19px;
+    width: 389px;
+    height: 199px;
+    z-index: 1;
+    transition: transform 0.4s ease;   /* 호버 슬라이드용 */
+}
+
+/* 2) 앞에 놓인 약통 이미지 (approximately.png) */
+.img-sketch .main-img-box .img-box:nth-child(2) {
+    left: 0;
+    top: 0;
+    width: 492px;
+    height: 235px;
+    z-index: 2;
+}
+
+/* 영역 호버 시: 뒤 스케치 종이가 오른쪽으로 살짝 빠져나옴
+   (회전은 종이 들춰지는 느낌 — 순수 슬라이드만 원하면 rotate 빼면 됨) */
+.img-sketch:hover .main-img-box .img-box:nth-child(1) {
+    transform: translateX(24px) rotate(1.5deg);
+}
+
+.img-sketch .main-img-box .img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+/* =========================================================================
+   5. 우측 컬럼
+   ========================================================================= */
+
+.right-column {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 44px;
+    width: 276px;
+    flex-shrink: 0;
+}
+
+/* --- 큰 폰 목업 --- */
+.big-phone {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    padding: 16px;
+    gap: 10px;
+    background: #FFFFFF;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.04);
+    border-radius: 40px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.big-phone:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.10);
+}
+
+
+.big-phone .img-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 38px;
+}
+
+.big-phone .img-box img {
+    width: 244px;
+    height: 500px;
+    object-fit: contain;
+}
+
+/* ===== 연락처 바 business-card (좌측 컬럼 하단, full-width 가로 바) ===== */
+.business-card {
+    position: relative;              /* toast 띄울 기준 */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;             /* 전화·메일 가로 배치 */
+    align-items: center;
+    align-self: stretch;
+    gap: 12px;
+    width: 100%;                     /* full-width */
+    padding: 12px 20px;
+    background: #FFFFFF;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.04);
+    border-radius: 20px;
+}
+
+.business-card .number,
+.business-card .mail {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 8px 12px;
+    border-radius: 10px;
+    cursor: pointer;                 /* 누를 수 있음을 알림 */
+    transition: background-color 0.2s ease;
+}
+
+.business-card .number:hover,
+.business-card .mail:hover {
+    background: #F5F9FF;
+}
+
+/* 전화·메일 사이 세로 구분선 (가로 배치용) */
+.business-card .mail {
+    margin-left: 4px;
+    padding-left: 16px;
+    border-left: 1px solid #F0F0F0;
+}
+
+/* 아이콘을 옅은 원형 배경에 담기 */
+.business-card .icon {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #EAF4FF;             /* 아이콘색(#0088FF)과 어울리는 톤 */
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.business-card .icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.business-card h2 {
+    color: #222222;
+    font-family: "Noto Sans KR";
+    font-size: 16px;                 /* 18 → 16: 긴 이메일이 카드 안에 안정적으로 */
+    font-weight: 700;
+    line-height: normal;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 복사 완료 토스트 — 바 우측 끝에 표시 (space-between 느낌) */
+.copy-toast {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%) translateX(8px);
+    padding: 4px 12px;
+    border-radius: 99px;
+    background: #222;
+    color: #FFF;
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 5;
+}
+
+.business-card.show-toast .copy-toast {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(0);
+}
+
+
+/* =========================================================================
+   6. 메인 워크 (포스트 본문)
+   ---------------------------------------------------------------------------
+   한 포스트 = .main-work > .main-danawa-wrap > (.top-Category + .post-wrap)
+   포스트는 세로로 계속 쌓이는 구조. 새 포스트는 .main-work 블록 통째로 복사.
+   ※ 예전엔 .main-work / .main-danawa-wrap / .top-Category / .class-* 가
+     각각 두 번씩 정의돼 값이 서로 덮어쓰고 있었음 → 여기서 한 번으로 통합.
+   ========================================================================= */
+
+/* 포스트 컨테이너: 세로 스택 */
+.main-work {
+    display: flex;
+    flex-direction: column;
+    width: var(--post-w);
+}
+
+/* 포스트 사이 간격은 인접 셀렉터로만 → 복사해도 항상 일정, :first-child 핵 불필요 */
+.main-work + .main-work { margin-top: var(--gap-post); }
+.main-work:first-of-type { margin-top: var(--gap-post-first); }
+
+/* nav 클릭으로 스크롤 도착 시 상단에 약간의 여백 확보 */
+.main-work, .hero { scroll-margin-top: 40px; }
+
+.main-danawa-wrap {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+/* --- 상단 카테고리 칩 행 --- */
+.top-Category {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.class-list,
+.class-title {
+    display: flex;
+    padding: 14px 18px;
+    align-items: center;
+    gap: 10px;
+    border-radius: var(--r-soft);
+    background: #FFF;
+    box-shadow: var(--shadow-card);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+/* 칩에도 살짝 생기 (호버 시 미세하게 떠오름) */
+.class-list:hover,
+.class-title:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lift);
+}
+
+.class-list .icon { width: 24px; height: 24px; flex-shrink: 0; }
+
+.class-title .logo { width: auto; height: 24px; overflow: hidden; }
+.class-title .logo img { width: 100%; height: 100%; object-fit: contain; }
+
+/* 위계: 카테고리명(Web site/Mobile)은 파랑, 프로젝트명은 먹색 */
+.class-list h2 {
+    color: #0088FF;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.class-title h2 {
+    color: var(--ink);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: normal;
+}
+
+
+/* =========================================================================
+   7. 포스트 카드 / 목업 / 본문
+   ========================================================================= */
+
+.post-wrap {
+    display: flex;
+    padding: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 60px;
+    align-self: stretch;
+    border-radius: 30px;
+    background: #FFF;
+
+    /* 그림자 */
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.04);
+}
+
+
+.post-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;   /* 1대1 */
+    gap: 20px;
+}
+
+
+/* ===== Graphic 전용 그리드 (6칼럼 span으로 비율) ===== */
+.graphic-grid {
+    grid-template-columns: repeat(6, 1fr);
+}
+
+/* 1행: 1:1 두 개 */
+.graphic-grid > .post-wrap:nth-child(1),
+.graphic-grid > .post-wrap:nth-child(2) { grid-column: span 3; }
+
+/* 2행: 2/3 + 1/3 */
+.graphic-grid > .post-wrap:nth-child(3) { grid-column: span 4; }
+.graphic-grid > .post-wrap:nth-child(4) { grid-column: span 2; }
+
+/* 1행 카드 = 정사각형 썸네일 */
+.graphic-grid > .post-wrap:nth-child(-n+2) .img-box {
+    aspect-ratio: 1 / 1;
+}
+
+/* 2행 카드 = 가로 배너, 높이 통일 */
+.graphic-grid > .post-wrap:nth-child(n+3) .img-box {
+    height: 260px;
+}
+
+/* 이미지가 박스를 꽉 채우게 (1:1·배너 크롭) */
+.graphic-grid .img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 클릭 가능 신호 (모달은 내일!) */
+.graphic-grid .post-wrap { cursor: pointer; }
+
+
+.title-h4 {
+    color: #222;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;              /* ← 아래 2번 원인도 같이 해결 */
+    align-self: stretch;    /* ← 카드 전체 너비 차지 → 그제서야 center 먹음 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.post-grid .post-wrap {
+    gap: 16px;
+}
+
+
+.mokup {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.device {
+    position: relative;
+    width: 100%;             /* 컬럼 폭에 맞춰 줄어듦 */
+    max-width: 633.493px;    /* 원래 이미지 폭 이상으로는 안 커짐 */
+}
+
+.device img {
+    display: block;
+    width: 100%;
+    height: auto;       /* 비율 자동 유지 */
+}
+
+/* 노트북 화면 영역 — 목업 이미지의 스크린 위치에 정확히 겹침 */
+.device .screen {
+    position: absolute;
+    top: 2.8%;
+    left: 12.1%;
+    width: 75.8%;
+    height: 76.7%;
+    overflow: hidden;   /* 확대된 iframe이 화면 밖으로 넘치는 것 잘라냄 */
+    border-radius: 12px;
+}
+
+/* iframe을 데스크탑 가상 뷰포트(≈1400px)로 키운 뒤 화면 영역에 맞춰 축소.
+   → 사이트가 모바일이 아닌 '데스크탑 레이아웃'으로 렌더링됨.
+   width/height를 (100% / scale)로 잡고 같은 scale로 줄이므로,
+   목업이 반응형으로 줄어도 화면 영역을 항상 꽉 채움. */
+.device .screen iframe {
+    --screen-scale: 0.34;   /* 화면폭 ≈480px ÷ 0.34 ≈ 1410px (데스크탑 뷰) */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% / var(--screen-scale));
+    height: calc(100% / var(--screen-scale));
+    border: 0;              /* 외곽선 제거 */
+    transform: scale(var(--screen-scale));
+    transform-origin: top left;
+}
+
+.post-contents {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 30px;
+    align-self: stretch;
+}
+
+.content-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    align-self: stretch;
+}
+
+.title-and-tag {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.title-and-tag > h1 {
+    color: #222;
+    font-family: "Noto Sans KR";
+    font-size: 42px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.tag-list {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    align-self: stretch;
+}
+
+.tag {
+    display: flex;
+    padding: 4px 10px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 99px;
+    border: 1px solid var(--Grays-Gray-4, #D1D1D6);
+}
+
+.tag p {
+    color: var(--muted);        /* #D1D1D6은 흰 배경에서 거의 안 보임 */
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.tag:hover {
+    background-color: #F2F2F7;
+}
+
+.tag p:hover {
+    color : #AEAEB2;
+}
+
+.story p {
+    color: #222;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%;
+}
+
+.use-information {
+    display: flex;
+    height: 80px;
+    align-items: flex-end;
+    gap: 30px;
+}
+
+.program-used {
+    display: flex;
+    width: 232px;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    align-self: stretch;
+}
+
+/* 라벨(작업 소요 시간/기여도)은 보조로 작게 */
+.use-information h1 {
+    color: var(--muted);
+    font-family: "Noto Sans KR";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.program-used ul{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.program-used ul li {
+    display : flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.time, .contribution {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    align-self: stretch;
+}
+
+.time h3, .contribution h3 {
+    color: var(--ink);          /* #D1D1D6(거의 안 보임) → 먹색. 값이 주인공이어야 함 */
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+/* =========================================================================
+   버튼 — .btn 베이스 + 모디파이어
+   마크업:  <a class="btn btn--primary">  (노란 1차 액션: 사이트로 이동)
+            <a class="btn btn--ghost">    (흰 보조: 깃허브)  ※ 예전 id="git-go" 대체
+            <button class="btn">          (기획서/목업 보기)
+   ========================================================================= */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: var(--r-btn);
+    border: 1px solid var(--ink);
+    background: #FFF;
+    color: var(--ink);
+    font: inherit;
+    text-decoration: none;   /* <a class="btn"> 도 <button> 과 동일하게 보이도록 */
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+
+/* 아이콘: 38px svg를 24px 박스로 통일 (예전 .button-group .icon=38px는 과함) */
+.btn .icon {
+    display: inline-flex;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+.btn .icon svg { width: 100%; height: 100%; }
+
+.btn span {
+    color: var(--ink);
+    font-family: "Noto Sans KR";
+    font-size: 17px;        /* 24px는 버튼 글자로 과함 → 17px */
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* 모디파이어 */
+.btn--primary { background: var(--accent); border-color: var(--accent); }
+.btn--ghost   { background: #FFF; }
+
+/* 인터랙션 */
+.btn:hover          { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.10); }
+.btn:active         { transform: translateY(1px) scale(.98); transition-duration: .05s; }
+.btn--primary:hover { box-shadow: 0 4px 14px rgba(246,255,0,.5); }
+.btn:focus-visible  { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+.button-group {
+    display: flex;
+    flex-wrap: wrap;            /* 버튼 늘거나 폭 좁아져도 줄바꿈 (반응형 안전) */
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+}
+
+
+/* 이미지 박스가 오버레이의 기준점 + 넘침 잘라내기 */
+.post-grid .img-box {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+}
+.post-grid .img-box img {
+    display: block;
+    width: 100%;
+    transition: transform .4s ease;
+}
+
+/* 어두워지는 오버레이 */
+.img-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px;
+    text-align: center;
+    background: rgba(0, 0, 0, .55);
+    opacity: 0;                         /* 평소엔 숨김 */
+    transition: opacity .3s ease;
+}
+/* 안쪽 텍스트는 살짝 아래에서 떠오르게 */
+.img-overlay > * {
+    transform: translateY(8px);
+    transition: transform .3s ease;
+}
+
+/* hover 시 */
+.post-grid .img-box:hover .img-overlay { opacity: 1; }
+.post-grid .img-box:hover .img-overlay > * { transform: translateY(0); }
+.post-grid .img-box:hover img { transform: scale(1.05); }   /* 이미지 살짝 줌 */
+
+.overlay-desc {
+    margin: 0;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+.overlay-cue {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #F6FF00;        /* svg stroke가 이 색을 따라감 */
+    font-size: 14px;
+    font-weight: 700;
+}
+
+
+
+
+/* ── 흰 테두리 보조 버튼(.btn--ghost) 호버 디테일 ── */
+.btn--ghost:hover  { background: #F7F7F7; box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+.btn--ghost:active { background: #EFEFEF; box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+
+
+/* =========================================================================
+   스크롤 등장(reveal) 유틸 — JS에서 IntersectionObserver로 .is-in 토글
+   포스트가 아래에서 부드럽게 올라오며 나타남 (2026 무드)
+   ========================================================================= */
+.reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .6s ease, transform .6s ease;
+    will-change: opacity, transform;
+}
+.reveal.is-in {
+    opacity: 1;
+    transform: none;
+}
+
+
+/* 모션 줄이기 설정 사용자 배려 */
+@media (prefers-reduced-motion: reduce) {
+    .btn { transition: none; }
+    .btn:hover, .btn:active { transform: none; box-shadow: none; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+
+
+/* 두 개 묶는 큰 박스
+   ★버그 원인: .mokup이 flex-direction:column이라 .mokup-mobile이 이를
+     덮어쓰지 않으면 두 폰이 세로로 쌓임. → row 명시. */
+.mokup-mobile {
+    display: flex;
+    flex-direction: row;     /* ← 이 한 줄이 빠져서 탑처럼 쌓였던 것 */
+    height: 460px;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+    align-self: stretch;
+}
+
+/* 목업 하나하나 공통 — 컬럼이 좁으면 둘이 폭을 나눠 가짐(최대 280) */
+.mokup-mobile .device {
+    display: flex;
+    flex: 1 1 0;
+    width: 100%;
+    max-width: 280px;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 스플래시 — 아래쪽 정렬 */
+.device-splash {
+    padding: 0 24px 44px 24px;
+}
+
+/* 메인 — 위쪽 정렬 */
+.device-main {
+    padding: 33px 24px 0 24px;
+    justify-content: flex-end;
+}
+
+/* 이미지 */
+.mokup-mobile .device img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform .3s ease;
+}
+
+/* 폰 위에 마우스 올리면 살짝 확대 — '눌러볼 수 있는 미리보기' 신호 */
+.mokup-mobile .device:hover img {
+    transform: scale(1.03);
+}
+
+
+/* =========================================================================
+   사이트 팝업 모달 — 노트북 목업 + 스크롤되는 사이트 이미지 (Apple 무드)
+   ========================================================================= */
+
+/* 클릭으로 팝업 여는 카드에 포인터 표시 */
+.post-wrap[data-modal-open] { cursor: pointer; }
+
+.site-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+.site-modal[hidden] { display: none; }
+
+/* 배경: 어둡게 + 유리 블러 (아이폰 느낌) */
+.site-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: modalFade .25s ease both;
+}
+
+.site-modal__card {
+    position: relative;
+    z-index: 1;
+    width: min(1180px, 100%);
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #FFF;
+    border-radius: 20px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    animation: modalPop .3s cubic-bezier(.2, .8, .25, 1) both;
+}
+
+@keyframes modalFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modalPop {
+    from { opacity: 0; transform: translateY(14px) scale(.98); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* --- 상단 바 --- */
+.site-modal__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    flex-shrink: 0;
+}
+
+.site-modal__close {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 99px;
+    background: #141414;
+    color: #FFF;
+    cursor: pointer;
+    transition: background-color .2s ease, transform .12s ease;
+}
+.site-modal__close:hover  { background: #333; }
+.site-modal__close:active { transform: scale(.92); }
+
+/* --- 본문 --- */
+.site-modal__body {
+    display: flex;
+    flex-wrap: wrap;                /* 좁은 화면에서 우측 컬럼이 아래로 */
+    align-items: flex-start;
+    justify-content: center;
+    gap: 30px;
+    padding: 0 20px 28px;
+    overflow-y: auto;
+}
+
+.site-modal__left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    flex-shrink: 0;
+}
+
+/* --- 노트북 목업 + 화면 --- */
+.popup-device {
+    position: relative;
+    width: 725px;                  /* 검은 화면 폭 ≈ 569px가 되도록 */
+    max-width: 100%;
+}
+
+.popup-mockup {
+    display: block;
+    width: 100%;
+    height: auto;
+    position: relative;
+    z-index: 1;
+    pointer-events: none;          /* 클릭/호버는 화면(screen)이 받도록 */
+}
+
+/* 목업 검은 화면 영역에 정확히 겹침 (758×480 기준 측정값) */
+.popup-screen {
+    position: absolute;
+    left: 10.82%;
+    top: 0.83%;
+    width: 78.5%;
+    height: 82.13%;
+    z-index: 2;
+    overflow: hidden;
+    border-radius: 20px 20px 0 0;
+    background: #000;
+}
+
+.popup-screen .ps-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    display: block;
+    transform: translateY(0);
+    transition: transform .8s ease-out;   /* 기본 + 떠났을 때 되감기 */
+}
+.popup-screen .ps-img[hidden] { display: none; }
+
+/* 열렸을 때: 천천히 끝까지 내려감.
+   translateY(-100%)는 '각 이미지 자기 높이'만큼 → +화면높이(win-h)로 바닥 정렬.
+   → main/sub 높이가 달라도 항상 정확히 맨 아래까지 보여줌 */
+.popup-screen.auto .ps-img {
+    transform: translateY(calc(-100% + var(--win-h, 405px)));
+    transition: transform 12s linear;
+}
+/* hover: 빠르게 내려감 */
+.popup-screen.fast .ps-img {
+    transform: translateY(calc(-100% + var(--win-h, 405px)));
+    transition: transform 3s ease-in;
+}
+/* 전환/리셋 순간 애니메이션 끄기 (맨 위로 즉시 점프용) */
+.popup-screen.no-anim .ps-img { transition: none !important; }
+
+/* Main/Sub 토글: 이력 토글 스타일 재사용 + 폭만 고정 */
+.popup-toggle { width: 178px; }
+
+/* --- 우측 설명 컬럼 --- */
+.site-modal__right {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 330px;
+    flex-shrink: 0;
+}
+
+.smr-head {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.smr-head h2 {
+    color: #222;
+    font-size: 28px;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.smr-desc p {
+    color: #222;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+    word-break: keep-all;
+}
+.smr-desc p + p { margin-top: 12px; }
+
+.smr-plan { align-self: flex-start; }
+
+
+/* 좁은 화면: 목업이 줄어들면 화면 높이도 함께 줄어드므로 win-h는 JS가 갱신 */
+@media (max-width: 820px) {
+    .site-modal__right { width: 100%; max-width: 569px; }
+}
+
+
+/* =========================================================
+   다나와 모달 — showcase 타입 (설명 텍스트 없는 버전)
+   기존 .site-modal__body / .popup-device / .popup-screen 등
+   스타벅스 모달 스타일을 그대로 상속하고, 아래 내용만 추가
+   ========================================================= */
+
+/* 중앙 단일 컬럼 본문 — 좌우 분리(site-modal__left/right) 대신 */
+.site-modal__body--center {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+/* 시각적으로는 숨기되 스크린리더용 타이틀은 유지 */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* --- 썸네일 strip --- */
+.popup-thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 725px;              /* popup-device 폭과 맞춤 */
+}
+
+/* 페이지가 1개뿐일 때 JS가 hidden 속성을 부여 */
+.popup-thumbs[hidden] { display: none; }
+
+.popup-thumb {
+    position: relative;
+    flex: 0 1 160px;               /* 가로로 긴 직사각형, 여러 줄 자동 래핑 */
+    aspect-ratio: 16 / 9;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    background: #ececec;
+    cursor: pointer;
+    padding: 0;
+    transition: border-color .2s ease, transform .2s ease;
+}
+
+.popup-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;          /* 페이지 상단(주요 콘텐츠) 우선 노출 */
+    display: block;
+}
+
+.popup-thumb:hover {
+    transform: translateY(-2px);
+}
+
+.popup-thumb.active {
+    border-color: #222;
+}
+
+.popup-thumb.active::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(34, 34, 34, 0.08);
+}
+
+/* --- 버튼 그룹 위치 정리 --- */
+.popup-actions {
+    justify-content: center;
+}
+
+/* =========================================================
+   모바일 폰 목업 (약쏙·해독제 공용) — phon.html 구조를 그대로 이식
+   전체를 0.62배로 축소, 래퍼는 축소된 크기만 차지
+   ========================================================= */
+.mockup-phone-wrap {
+    width: 281px;    /* 453 * 0.62 */
+    height: 565px;   /* 912 * 0.62 */
+    flex: 0 0 auto;
+}
+.mockup-phone {
+    width: 453px;
+    height: 912px;
+    transform: scale(0.62);
+    transform-origin: top left;
+}
+.mp-out {
+    width: 453px;
+    height: 912px;
+    border-radius: 83px;
+    background: linear-gradient(180deg, #5D5B9D 0%, #12112B 100%);
+    box-shadow: 0 4px 4px 0 rgba(255, 255, 255, 0.25) inset, 0 8px 12px 0 rgba(0, 0, 0, 0.25) inset;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.mp-bezel {
+    width: 433px;
+    height: 892px;
+    border-radius: 80px;
+    border: 2px solid #AAA4F4;
+    background: linear-gradient(180deg, #21212B 0%, #141427 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.mp-screen-wrap {
+    width: 393px;
+    height: 852px;
+    border-radius: 69px;
+    background: #FFF;
+    position: relative;
+}
+.mp-island {
+    width: 98px;
+    height: 24px;
+    border-radius: 99px;
+    background: #21212B;
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    pointer-events: none;
+}
+.mp-screen {
+    position: absolute;
+    inset: 0;
+    border-radius: 69px;
+    overflow: hidden;
+}
+.mp-screen .swiper,
+.mp-screen .swiper-wrapper,
+.mp-screen .swiper-slide {
+    width: 100%;
+    height: 100%;
+}
+.mp-screen .swiper-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+}
+
+/* --- 캐러셀 컨트롤 (폰 아래 이전 / n·전체 / 다음) --- */
+.mockup-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+}
+.mockup-nav {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;              /* 좁은 flex 컨테이너에서 원이 타원으로 찌그러지지 않게 */
+    border-radius: 50%;
+    border: 1.5px solid #d9d9d9;
+    background: #fff;
+    color: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background .2s ease, border-color .2s ease, transform .1s ease;
+}
+.mockup-nav:hover { background: #f2f2f2; border-color: #bdbdbd; }
+.mockup-nav:active { transform: scale(.92); }
+.mockup-nav.swiper-button-disabled { opacity: .35; cursor: default; }
+.mockup-frac {
+    min-width: 64px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 15px;
+    color: #444;
+    font-variant-numeric: tabular-nums;
+}
+
+
+/* =========================================================
+   그래픽 갤러리 모달 — 목업 프레임 없이 이미지 자체를 보여주는 캐러셀
+   (배너 가로/세로, 정사각 AI 등 혼합 비율을 contain으로 온전히 표시)
+   ========================================================= */
+.gallery-title {
+    color: #222;
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: normal;
+    text-align: center;
+}
+.gallery-stage {
+    width: min(760px, 100%);
+    height: min(560px, 68vh);      /* 낮은 화면에서도 컨트롤/여백 확보 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.site-modal--gallery .swiper {
+    width: 100%;
+    height: 100%;
+}
+.site-modal--gallery .swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 4px;
+    overflow: hidden;
+}
+/* 일반 이미지: 작으면 키우고 크면 줄여 스테이지에 꽉 맞춤(비율 유지·중앙).
+   object-fit:contain이라 img 박스는 스테이지 크기 → 그림자/라운드는 실제
+   이미지에 안 붙으므로 생략(깔끔한 플랫 표시) */
+.site-modal--gallery .swiper-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+/* 세로로 매우 긴 이미지(상세 페이지 등)는 폭에 맞춰 원본 크기로 두고
+   슬라이드 안에서 세로 스크롤 (JS가 비율 감지 후 .is-tall 부여) */
+.site-modal--gallery .swiper-slide.is-tall {
+    align-items: flex-start;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: #c9c9c9 transparent;
+}
+.site-modal--gallery .swiper-slide.is-tall img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    object-fit: initial;
+}
+.site-modal--gallery .swiper-slide.is-tall::-webkit-scrollbar { width: 8px; }
+.site-modal--gallery .swiper-slide.is-tall::-webkit-scrollbar-thumb {
+    background: #c9c9c9;
+    border-radius: 4px;
+}
+
+/* 작은/여러 이미지 묶음 슬라이드 — 한 화면에 그리드로 여러 장.
+   내용이 스테이지보다 크면(넘치면) 슬라이드 안에서 세로 스크롤(휠은 스크롤 우선) */
+.site-modal--gallery .swiper-slide.is-grid {
+    align-items: safe center;   /* 넘칠 때 상단 잘림 방지 */
+    justify-content: center;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #c9c9c9 transparent;
+}
+.site-modal--gallery .swiper-slide.is-grid::-webkit-scrollbar { width: 8px; }
+.site-modal--gallery .swiper-slide.is-grid::-webkit-scrollbar-thumb {
+    background: #c9c9c9;
+    border-radius: 4px;
+}
+.graphic-grid-slide {
+    width: 100%;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 4), 1fr);
+    grid-auto-rows: var(--rowH, 168px);
+    gap: 14px;
+    padding: 4px;
+}
+.graphic-grid-slide .ggs-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background: #f6f6f6;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.graphic-grid-slide .ggs-cell img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
